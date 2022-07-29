@@ -1,4 +1,4 @@
-# pgtemplate
+# sqltemplate
 
 minimal sql template for pg module
 
@@ -7,7 +7,7 @@ minimal sql template for pg module
 usage:
 ```
 pg = require("pg")
-SQL = require("pgtemplate")
+SQL = require("sqltemplate")
 
 ...
 
