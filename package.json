@@ -1,0 +1,24 @@
+{
+  "name": "pgtemplate",
+  "version": "1.0.0",
+  "description": "mini sql template library for pg",
+  "main": "sql2.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/geogeim/pgtemplate.git"
+  },
+  "keywords": [
+    "pg",
+    "template",
+    "sql"
+  ],
+  "author": "geogeim",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/geogeim/pgtemplate/issues"
+  },
+  "homepage": "https://github.com/geogeim/pgtemplate#readme"
+}
