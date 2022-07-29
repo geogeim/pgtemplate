@@ -1,5 +1,12 @@
 'use strict';
-const minify = require('pg-minify');
+
+let minify;
+
+try {
+  minify = require('pg-minify');
+} catch(e) {
+  minify = a => a
+}
 
 const $raw = Symbol();
 const $sql = Symbol();
