@@ -11,7 +11,7 @@ try {
 const $raw = Symbol();
 const $sql = Symbol();
 
-function SQL(strings, ...values) {
+function sql(strings, ...values) {
   let compiled = null;
   const template = {
     s: strings || [''],
@@ -61,29 +61,22 @@ function SQL(strings, ...values) {
   };
 }
 
-SQL.raw = function (s) {
+sql.raw = function (s) {
   const v = new String(s);
   v[$raw] = true;
   return v;
 }
 
-SQL.id = function (s) {
-  return SQL.raw(`"${s.replace(/"/g, '""')}"`);
+sql.id = function (s) {
+  return sql.raw(`"${s.replace(/"/g, '""')}"`);
 }
 
-SQL.joinVals = function(v, d = ', ') {
-  return SQL(Array(v.length + 1).fill('').fill(d, 1, v.length), ...v);
+sql.insertObjs = function(v) {
+  return sql`(${Object.keys(v[0]).map(sql.id).join(',')}) VALUES ${v.map(r => Object.values(r).join(','))}`;
 }
 
-SQL.joinIds = function (v, d = ', ') {
-  return SQL(v.map(x => SQL.id(x)).join(d), []);
+sql.setObj = function(v) {
+  return sql`${Object.entries(v).map(([k, v]) => sql`${sql.id(k)}=${v}`).join(',')}`;
 }
 
-SQL.joinIV = function(v, d1 = ', ', d2 = ' = ') {
-  return SQL(
-    Object.keys(v).reduce(((r, v, k) => r.concat((k ? d1 : '') + SQL.id(v) + d2)), []), 
-    ...Object.values(v)
-  );
-}
-
-module.exports = SQL;
+module.exports = sql;

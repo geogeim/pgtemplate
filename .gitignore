@@ -1,2 +1,3 @@
 .netrc
 node_modules
+.npmrc
