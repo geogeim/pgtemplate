@@ -34,6 +34,10 @@ function sql(strings, ...values) {
           throw new Error(`undefined argument $${d} to query`, { template: template });
         } else if (v === null) {
           o.s += 'NULL'
+        } else if (Array.isArray(v)) {
+          const w = compile({ s: Array(v.length + 1).fill(',', 1, v.length), v })
+          o.s += w.s;
+          o.v = o.v.concat(w.v);
         } else if (typeof v === 'object' && v[$raw]) {
           o.s += v;
         } else if (typeof v === 'object' && v[$sql]) {
@@ -46,7 +50,7 @@ function sql(strings, ...values) {
         }
       }
 
-      o.s += i.s[c] || ''; 
+      o.s += i.s[c] || '';
       o.s = minify(o.s);
       return o;
     }
@@ -73,16 +77,12 @@ sql.id = function (s) {
   return sql.raw(`"${s.replace(/"/g, '""')}"`);
 }
 
-sql.join = function (array, sep='') {
-  return sql(Array(array.length + 1).fill(sep, 1, array.length), ...array)
-}
-
 sql.insertObjs = function (v) {
-  return sql`(${sql.join(Object.keys(v[0]).map(sql.id), ',')}) VALUES ${sql.join(v.map(r => sql`(${sql.join(Object.values(r), ',')})`), ',')}`;
+  return sql`(${Object.keys(v[0]).map(sql.id)}) values ${v.map(o => sql`(${Object.values(o)})`)}`;
 }
 
 sql.setObj = function (v) {
-  return sql.join(Object.entries(v).map(([k, v]) => sql`${sql.id(k)}=${v}`), ',');
+  return sql`${Object.entries(v).map(([k, v]) => sql`${sql.id(k)}=${v}`)}`;
 }
 
 module.exports = sql;
