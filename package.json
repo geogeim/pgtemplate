@@ -1,6 +1,5 @@
 {
   "name": "@geogeim/sqltemplate",
-  "version": "1.0.3",
   "description": "mini sql template library for pg",
   "main": "sql.js",
   "scripts": {

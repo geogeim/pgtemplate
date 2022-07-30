@@ -21,7 +21,7 @@ jobs:
           scope: '@geogeim'
       - run: npm ci
       - run: npm test
-      - run: npm version ${{env.VERSION}}
+      - run: npm version --no-git-tag-version ${{env.VERSION}}
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
