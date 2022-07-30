@@ -9,6 +9,7 @@ jobs:
       contents: read
       packages: write 
     steps:
+      - run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
       - uses: actions/checkout@v3
       # Setup .npmrc file to publish to GitHub Packages
       - uses: actions/setup-node@v3
@@ -19,6 +20,7 @@ jobs:
           scope: '@geogeim'
       - run: npm ci
       - run: npm test
+      - run: npm version ${VERSION}
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -1,10 +1,10 @@
 {
   "name": "@geogeim/sqltemplate",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "mini sql template library for pg",
   "main": "sql.js",
   "scripts": {
-    "test": "node --test test.js"
+    "test": "mocha test.js"
   },
   "repository": {
     "type": "git",
@@ -23,5 +23,8 @@
   "homepage": "https://github.com/geogeim/sqltemplate#readme",
   "optionalDependencies": {
     "pg-minify": "^1.6.2"
+  },
+  "devDependencies": {
+    "mocha": "^10.0.0"
   }
 }
