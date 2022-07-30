@@ -40,8 +40,8 @@ sql`select * from "table" where id=${1} and ${sql`status=${2}`}` ==
 ``` 
 * an array will be evaluated itemwise and joined by comma
 ```js
-sql`delete from poll_options where id in (${[1,2,3]}) returning *` == 
-  { text: 'delete from poll_options where id in ($1,$2,$3) returning *', values: [1, 2, 3]}
+sql`delete from options where id in (${[1,2,3]}) returning *` == 
+  { text: 'delete from options where id in ($1,$2,$3) returning *', values: [1, 2, 3]}
 ```
 
 ## 2 extra helper methods are provided
