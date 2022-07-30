@@ -2,7 +2,8 @@
 
 Minimal sql template libray for `pg` and `mysql` modules
 
-<100 lines of code, zero dependencies*
+* <100 lines of code, zero dependencies*
+* typescript friendly
 
 ##### * you can also install `pg-minify` to make the outputted queries a bit nicer, no other config needed!
 
@@ -44,7 +45,7 @@ sql`delete from options where id in (${[1,2,3]}) returning *` ==
   { text: 'delete from options where id in ($1,$2,$3) returning *', values: [1, 2, 3]}
 ```
 
-## 2 extra helper methods are provided
+## extra helper methods
 
 * `sql.insertObjs(array)`: generates the column name and value arrays for an insert query. We assume that the objects are uniform (same keys in every object) and the array contains at least one object
 
