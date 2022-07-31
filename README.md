@@ -1,22 +1,18 @@
 # sqltemplate
 
-Minimal sql template libray for `pg` and `mysql` modules
+micro sql template libray for `pg` and `mysql` modules
 
-* <100 lines of code, zero dependencies*
+* <100 lines of code, zero dependencies [^1]
 * typescript friendly
 
-##### * you can also install `pg-minify` to make the outputted queries a bit nicer, no other config needed!
-
-
-## usage:
+## usage
 ```js
-pg = require("pg")
-sql = require("sqltemplate")
+const sql = require("sqltemplate");
+const { Client } = require('pg')
 
 ...
 
-pg.query(sql`delete from options where id in (${obsoleteOptions}) returning *`)
-
+const res = await client.query(sql`delete from options where id in (${obsoleteOptions}) returning *`);
 ```
 
 The template recognizes the following argument types:
@@ -45,17 +41,19 @@ sql`delete from options where id in (${[1,2,3]}) returning *` ==
   { text: 'delete from options where id in ($1,$2,$3) returning *', values: [1, 2, 3]}
 ```
 
-## extra helper methods
+### helper methods
 
 * `sql.insertObjs(array)`: generates the column name and value arrays for an insert query. We assume that the objects are uniform (same keys in every object) and the array contains at least one object
 
 ```js
-sql`insert into "table" ${sql.insertObjs([{key: 1, data: 1}, {key: 2, data: 2}])}` == 
+sql`insert into "table" ${sql.insertObjs([{key: 1, data: 2}, {key: 3, data: 4}])}` == 
   { text: 'insert into "table" ("key","value") values ($1,$2),($3,$4)', values: [1, 2, 3, 4]}
 ```
 * `sql.updateObj(obj)`: generates the key=value pairs for an update query.
 
 ```js
-sql`update "table" set ${sql.updateObj({key: 1, data: 1})}` == 
+sql`update "table" set ${sql.updateObj({key: 1, data: 2})}` == 
   { text: 'update "table" set "key"=$1,"value"=$2', values: [1, 2]}
 ```
+## tips
+[^1]: you can also install `pg-minify` to make the outputted queries a bit nicer, no other config needed!

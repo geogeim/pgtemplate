@@ -1,16 +1,21 @@
-type Value = number | string | null | SqlTemplate;
+type PlainValue = number | string | null;
+type TemplateValue = PlainValue | SqlQuery | TemplateValue[]
 
-type SqlTemplate = {
-  readonly text: string,
-  readonly values: Array<Value>
+type PlainObject = {
+  [i: string]: PlainValue
 };
 
-declare function sql(strings: TemplateStringsArray, ...v: Value[]): SqlTemplate;
+type SqlQuery = {
+  readonly text: string,
+  readonly values: PlainValue[]
+};
+
+declare function sql(strings: TemplateStringsArray, ...v: TemplateValue[]): SqlQuery;
 declare namespace sql {
   function raw(s: string): string;
   function id(s: string): string;
-  function insertObjs(s: object[]): SqlTemplate;
-  function updateObj(s: object): SqlTemplate;
+  function insertObjs(s: PlainObject[]): SqlQuery;
+  function updateObj(s: PlainObject): SqlQuery;
 }
 
 export = sql;
