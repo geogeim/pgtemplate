@@ -1,21 +1,21 @@
-type PlainValue = number | string | null;
-type TemplateValue = PlainValue | SqlQuery | TemplateValue[]
+type JsonPrimitive = string | number | boolean | null;
+type JsonObject = { [key: string]: JsonValue };
+type JsonArray = JsonValue[];
+type JsonValue = JsonPrimitive | JsonArray | JsonObject;
 
-type PlainObject = {
-  [i: string]: PlainValue
-};
+type TemplateValue = JsonValue | SqlQuery | TemplateValue[];
 
 type SqlQuery = {
   readonly text: string,
-  readonly values: PlainValue[]
+  readonly values: JsonArray[]
 };
 
 declare function sql(strings: TemplateStringsArray, ...v: TemplateValue[]): SqlQuery;
 declare namespace sql {
   function raw(s: string): string;
   function id(s: string): string;
-  function insertObjs(s: PlainObject[]): SqlQuery;
-  function updateObj(s: PlainObject): SqlQuery;
+  function insertObjs(s: JsonObject[]): SqlQuery;
+  function updateObj(s: JsonObject): SqlQuery;
 }
 
 export = sql;
