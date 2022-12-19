@@ -8,13 +8,15 @@ try {
   minify = a => a
 }
 
-const $raw = Symbol();
 const $sql = Symbol();
 
 function sql(strings, ...values) {
   let compiled = null;
+  strings = strings || ['']
+  strings = Array.isArray(strings) ? strings : [strings]
+
   const template = {
-    s: strings || [''],
+    s: strings,
     v: values || []
   }
 
@@ -34,12 +36,6 @@ function sql(strings, ...values) {
           throw new Error(`undefined argument $${d} to query`, { template: template });
         } else if (v === null) {
           o.s += 'NULL'
-        } else if (Array.isArray(v)) {
-          const w = compile({ s: Array(v.length + 1).fill(',', 1, v.length), v })
-          o.s += w.s;
-          o.v = o.v.concat(w.v);
-        } else if (typeof v === 'object' && v[$raw]) {
-          o.s += v;
         } else if (typeof v === 'object' && v[$sql]) {
           const w = compile(v[$sql]);
           o.s += w.s;
@@ -67,22 +63,12 @@ function sql(strings, ...values) {
   };
 }
 
-sql.raw = function (s) {
-  const v = new String(s);
-  v[$raw] = true;
-  return v;
-}
-
 sql.id = function (s) {
-  return sql.raw(`"${s.replace(/"/g, '""')}"`);
+  return sql([`"${s.replace(/"/g, '""')}"`]);
 }
 
-sql.insertObjs = function (v) {
-  return sql`(${Object.keys(v[0]).map(sql.id)}) values ${v.map(o => sql`(${Object.values(o)})`)}`;
-}
-
-sql.setObj = function (v) {
-  return sql`${Object.entries(v).map(([k, v]) => sql`${sql.id(k)}=${v}`)}`;
+sql.join = function (v, d = ', ') {
+  return sql(Array(v.length + 1).fill('').fill(d, 1, v.length), ...v);
 }
 
 module.exports = sql;

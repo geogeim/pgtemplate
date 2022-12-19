@@ -12,7 +12,7 @@ const { Client } = require('pg')
 
 ...
 
-const res = await client.query(sql`delete from options where id in (${obsoleteOptions}) returning *`);
+const res = await client.query(sql`delete from options where id in (${sql.join(obsoleteOptions)}) returning *`);
 ```
 
 The template recognizes the following argument types:
@@ -24,7 +24,7 @@ sql`${null}` == { text: 'NULL', values: []}
 ```
 * strings wrapped with `sql.raw()` will be directly inserted into the query
 ```js
-sql`${sql.raw('--\n')}` == { text: '--\n', values: []}
+sql`${sql('--\n')}` == { text: '--\n', values: []}
 ```
 * strings wrapped with `sql.id()` are wrapped in double quotes and properly escaped
 ```js
@@ -35,25 +35,11 @@ sql`${sql.id('long row name"')}` == { text: '"long row name """', values: []}
 sql`select * from "table" where id=${1} and ${sql`status=${2}`}` == 
   { text: 'select * from "table" where "id"=$1 and "status"=$2', values: [1, 2]}
 ``` 
-* an array will be evaluated itemwise and joined by comma
+* use `sql.join()` to join array of values or templates into a new template 
 ```js
-sql`delete from options where id in (${[1,2,3]}) returning *` == 
-  { text: 'delete from options where id in ($1,$2,$3) returning *', values: [1, 2, 3]}
-```
+sql.join([1, sql`hello`, 2], ",") == 
+  { text: '$1,hello,$2', values: [1, 2]}
+``` 
 
-### helper methods
-
-* `sql.insertObjs(array)`: generates the column name and value arrays for an insert query. We assume that the objects are uniform (same keys in every object) and the array contains at least one object
-
-```js
-sql`insert into "table" ${sql.insertObjs([{key: 1, data: 2}, {key: 3, data: 4}])}` == 
-  { text: 'insert into "table" ("key","value") values ($1,$2),($3,$4)', values: [1, 2, 3, 4]}
-```
-* `sql.updateObj(obj)`: generates the key=value pairs for an update query.
-
-```js
-sql`update "table" set ${sql.updateObj({key: 1, data: 2})}` == 
-  { text: 'update "table" set "key"=$1,"value"=$2', values: [1, 2]}
-```
 ## tips
 [^1]: you can also install `pg-minify` to make the outputted queries a bit nicer, no other config needed!

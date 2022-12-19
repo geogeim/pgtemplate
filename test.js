@@ -46,21 +46,8 @@ it('nested template', () => {
   })
 });
 
-it('array', () => {
-  const objs = [
-    { key: 1, value: 'a' },
-    { key: "2", value: 'b' },
-  ]
-
-  template = sql`insert into table (${ Object.keys(objs[0]).map(sql.id) }) values ${ objs.map(o => sql`(${Object.values(o)})`) }`;
-  assert.deepEqual(template, {
-    text: 'insert into table ("key","value") values ($1,$2),($3,$4)',
-    values: [1, "a", "2", "b"]
-  })
-});
-
-it('sql.raw', () => {
-  template = sql`test ${sql.raw('RAW')} test`;
+it('sql raw', () => {
+  template = sql`test ${sql('RAW')} test`;
   assert.deepEqual(template, {
     text: 'test RAW test',
     values: []
@@ -75,27 +62,10 @@ it('sql.id', () => {
   })
 });
 
-it('sql.insertObjs', () => {
-  const objs = [
-    { key: 1, value: 'a' },
-    { key: 2, value: 'b' },
-  ]
-
-  template = sql`insert into table ${sql.insertObjs(objs)}`;
+it('sql.join', () => {
+  template = sql`${sql.join([1, sql`hello`, 2, 3], "-")}`;
   assert.deepEqual(template, {
-    text: 'insert into table ("key","value") values ($1,$2),($3,$4)',
-    values: [1, "a", 2, "b"]
-  })
-});
-
-it('sql.setObj', () => {
-  template = sql`update table set ${sql.setObj({
-    status: 1,
-    text: 'correct'
-  })} `;
-
-  assert.deepEqual(template, {
-    text: 'update table set "status"=$1,"text"=$2',
-    values: [1, 'correct']
+    text: '$1-hello-$2-$3',
+    values: [1, 2, 3]
   })
 });
